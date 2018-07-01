@@ -2,6 +2,7 @@ package Main_Robot;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.time.*;
 
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -23,9 +24,12 @@ public class App extends ListenerAdapter
 
 
 	ArrayList<String> reminders = new ArrayList<String>();
+	ArrayList<String> usertime = new ArrayList<String>();
+	ArrayList<String> time = new ArrayList<String>();
 	@Override
 	public void onMessageReceived(MessageReceivedEvent evt) {
 
+		
 		//Objects
 		User objUser = evt.getAuthor();
 		MessageChannel objMsgCh = evt.getChannel();
@@ -102,10 +106,47 @@ public class App extends ListenerAdapter
 			message = message.replaceAll("!music", "");
 			
 		}
+		
+		if (objMsg.getContentRaw().equalsIgnoreCase(Ref.prefix + "setTime")) {
+			String timing = set();
+			usertime.add(objUser.getId());
+			time.add(timing);
+			
+			objMsgCh.sendMessage("Time Set! Have Fun!").queue();
+			
+			
+		}
 
+		if (objMsg.getContentRaw().equalsIgnoreCase(Ref.prefix + "getTime")) {
+			boolean gotId = false;
+			
+			for (int i = 0; i < usertime.size(); i++) {
+				if (objUser.getId().equals(usertime.get(i))) {
+					objMsgCh.sendMessage("Your Set time is " + time.get(i)).queue();
+					gotId = true;
+				}
+			}
+			
+			if (gotId == false) {
+				objMsgCh.sendMessage("Set a time using !setTime !").queue();
+			}
+			
+		}
+		
+		if(objMsg.getContentRaw().equalsIgnoreCase(Ref.prefix + "present")) {
+			
+		}
+		
 
+	}
 
-
+	
+	private String set() {
+		
+		LocalTime time = LocalTime.now();
+		return time.toString();
+		
+		
 	}
 
 }
